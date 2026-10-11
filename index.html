@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>High Availability Cloud Architecture</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="status-badge">
+        <span class="status-dot"></span> System Operational
+      </div>
+      <h1>High-Availability Web Application</h1>
+      <p class="subtitle">Distributed across multiple Availability Zones with an Application Load Balancer and automated CI/CD.</p>
+    </header>
+
+    <main class="grid">
+      <div class="card">
+        <div class="card-icon">&#9729;</div>
+        <h2>Application Load Balancer</h2>
+        <p>Traffic is routed via AWS ALB to distribute incoming HTTP requests evenly across healthy target instances.</p>
+        <div class="metric">
+          <span class="metric-label">Status</span>
+          <span class="metric-value status-good">Active / Healthy</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">&#9881;</div>
+        <h2>Multi-AZ Compute</h2>
+        <p>Redundant Apache web servers hosted across isolated Availability Zones for fault tolerance and zero downtime.</p>
+        <div class="metric">
+          <span class="metric-label">Topology</span>
+          <span class="metric-value">Dual Zone (A / B)</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">&#128640;</div>
+        <h2>CI/CD Automation</h2>
+        <p>Automated deployment pipeline powered by GitHub Actions and AWS Systems Manager Run Command.</p>
+        <div class="metric">
+          <span class="metric-label">Trigger</span>
+          <span class="metric-value">Git Push (main)</span>
+        </div>
+      </div>
+    </main>
+
+    <section class="info-banner">
+      <div class="info-content">
+        <h3>Live Deployment Verification</h3>
+        <p>Refreshing this page sends a new request through the Application Load Balancer to the registered target group.</p>
+      </div>
+      <button class="btn" onclick="window.location.reload();">Refresh Route</button>
+    </section>
+
+    <footer class="footer">
+      <p>Deployed on Amazon Web Services &bull; Built with Cloud Infrastructure as Code</p>
+    </footer>
+  </div>
+</body>
+</html>
