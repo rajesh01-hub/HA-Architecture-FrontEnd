@@ -1,0 +1,27 @@
+name: Deploy Custom Frontend to EC2
+
+on:
+  push:
+    branches:
+      - main # Change to 'master' if your default branch uses that name
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1 # Change to match your AWS deployment region
+
+      - name: Deploy via AWS Systems Manager
+        run: |
+          aws ssm send-command \
+            --document-name "AWS-RunShellScript" \
+            --targets "Key=tag:Name,Values=ha-web-project-web-1,ha-web-project-web-2" \
+            --parameters 'commands=["rm -rf /var/www/html/*", "git clone https://github.com/YOUR-USERNAME/YOUR-REPO.git /tmp/update-$$", "cp -r /tmp/update-$$/* /var/www/html/", "rm -rf /tmp/update-$$"]'
