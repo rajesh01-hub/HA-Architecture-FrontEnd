@@ -22,8 +22,8 @@
         <h2>Application Load Balancer</h2>
         <p>Traffic is routed via AWS ALB to distribute incoming HTTP requests evenly across healthy target instances.</p>
         <div class="metric">
-          <span class="metric-label">Status</span>
-          <span class="metric-value status-good">Active / Healthy</span>
+          <span class="metric-label">Routing Status</span>
+          <span class="metric-value status-good">Active / Balanced</span>
         </div>
       </div>
 
@@ -32,8 +32,8 @@
         <h2>Multi-AZ Compute</h2>
         <p>Redundant Apache web servers hosted across isolated Availability Zones for fault tolerance and zero downtime.</p>
         <div class="metric">
-          <span class="metric-label">Topology</span>
-          <span class="metric-value">Dual Zone (A / B)</span>
+          <span class="metric-label">Serving Instance IP</span>
+          <span class="metric-value status-good">{{SERVER_IP}}</span>
         </div>
       </div>
 
@@ -50,14 +50,14 @@
 
     <section class="info-banner">
       <div class="info-content">
-        <h3>Live Deployment Verification</h3>
-        <p>Refreshing this page sends a new request through the Application Load Balancer to the registered target group.</p>
+        <h3>Live Node Verification</h3>
+        <p>Currently served by private node: <strong>{{SERVER_IP}}</strong>. Refreshing requests may switch between instances.</p>
       </div>
       <button class="btn" onclick="window.location.reload();">Refresh Route</button>
     </section>
 
     <footer class="footer">
-      <p>Deployed on Amazon Web Services &bull; Built with Cloud Infrastructure as Code</p>
+      <p>Deployed on Amazon Web Services &bull; rajeshdev.website</p>
     </footer>
   </div>
 </body>
