@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authentication | High Availability Architecture</title>
+  <style>
+    :root {
+      --bg-color: #0b1120;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --input-bg: #0f172a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+    }
+
+    .auth-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 1rem;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .auth-header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .auth-header p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .tab-switch {
+      display: flex;
+      background: var(--input-bg);
+      padding: 0.25rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1.75rem;
+      border: 1px solid var(--card-border);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 0.6rem 0;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-radius: 0.35rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #0b1120;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 0.5rem;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 0.75rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      padding: 0.25rem;
+    }
+
+    .toggle-password:hover {
+      color: var(--accent);
+    }
+
+    .toggle-password svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 0.8rem;
+      margin-top: 1rem;
+      background: var(--accent);
+      color: #0b1120;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .submit-btn:hover {
+      background: var(--accent-hover);
+      color: #fff;
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="auth-card">
+    <div class="auth-header">
+      <h1 id="form-title">Welcome Back</h1>
+      <p id="form-subtitle">Enter your credentials to access the system</p>
+    </div>
+
+    <div class="tab-switch">
+      <button type="button" class="tab-btn active" id="signin-tab" onclick="switchMode('signin')">Sign In</button>
+      <button type="button" class="tab-btn" id="signup-tab" onclick="switchMode('signup')">Sign Up</button>
+    </div>
+
+    <form id="auth-form" onsubmit="handleSubmit(event)">
+      <div class="form-group" id="name-group" style="display: none;">
+        <label for="fullname">Full Name</label>
+        <div class="input-wrapper">
+          <input type="text" id="fullname" placeholder="John Doe">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-wrapper">
+          <input type="email" id="email" required placeholder="name@example.com">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <input type="password" id="password" required placeholder="••••••••">
+          <button type="button" class="toggle-password" onclick="togglePasswordVisibility('password', this)">
+            <svg class="eye-open" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group" id="confirm-password-group" style="display: none;">
+        <label for="confirm-password">Confirm Password</label>
+        <div class="input-wrapper">
+          <input type="password" id="confirm-password" placeholder="••••••••">
+          <button type="button" class="toggle-password" onclick="togglePasswordVisibility('confirm-password', this)">
+            <svg class="eye-open" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submit-btn">Sign In</button>
+    </form>
+
+    <a href="index.html" class="back-link">&larr; Return to Dashboard</a>
+  </div>
+
+  <script>
+    let mode = 'signin';
+
+    function switchMode(newMode) {
+      mode = newMode;
+      const title = document.getElementById('form-title');
+      const subtitle = document.getElementById('form-subtitle');
+      const signinTab = document.getElementById('signin-tab');
+      const signupTab = document.getElementById('signup-tab');
+      const nameGroup = document.getElementById('name-group');
+      const confirmGroup = document.getElementById('confirm-password-group');
+      const submitBtn = document.getElementById('submit-btn');
+
+      if (mode === 'signup') {
+        title.innerText = 'Create Account';
+        subtitle.innerText = 'Register your details to join the cluster';
+        signinTab.classList.remove('active');
+        signupTab.classList.add('active');
+        nameGroup.style.display = 'block';
+        confirmGroup.style.display = 'block';
+        submitBtn.innerText = 'Sign Up';
+      } else {
+        title.innerText = 'Welcome Back';
+        subtitle.innerText = 'Enter your credentials to access the system';
+        signupTab.classList.remove('active');
+        signinTab.classList.add('active');
+        nameGroup.style.display = 'none';
+        confirmGroup.style.display = 'none';
+        submitBtn.innerText = 'Sign In';
+      }
+    }
+
+    function togglePasswordVisibility(fieldId, btn) {
+      const input = document.getElementById(fieldId);
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+
+      btn.innerHTML = isPassword
+        ? `<svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`
+        : `<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+    }
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      alert(mode === 'signin' ? 'Sign In successful (Demo Mode)' : 'Sign Up registered (Demo Mode)');
+    }
+  </script>
+</body>
+</html>
