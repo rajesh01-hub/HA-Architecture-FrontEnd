@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Authentication | High Availability Architecture</title>
-  <!-- AWS Cognito SDK via CDN -->
+  <!-- AWS Cognito SDK -->
   <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.12/dist/amazon-cognito-identity.min.js"></script>
   <style>
     :root {
@@ -95,6 +95,7 @@
       color: var(--text-main);
       font-size: 0.95rem;
       outline: none;
+      transition: border-color 0.2s;
     }
     input:focus { border-color: var(--accent); }
 
@@ -105,8 +106,12 @@
       border: none;
       cursor: pointer;
       color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      padding: 0.25rem;
     }
-    .toggle-password svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .toggle-password:hover { color: var(--accent); }
+    .toggle-password svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
     .submit-btn {
       width: 100%;
@@ -119,6 +124,7 @@
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
+      transition: background 0.2s;
     }
     .submit-btn:hover { background: var(--accent-hover); color: #fff; }
     .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -162,18 +168,16 @@
   </div>
 
   <script>
-    // ==========================================
-    // PASTE YOUR CLOUDFORMATION OUTPUTS HERE:
-    // ==========================================
+    // AWS Cognito User Pool Configuration
     const POOL_DATA = {
-      UserPoolId: 'us-east-1_aWk70DxhX', // e.g. us-east-1_Abc123Xyz
-      ClientId: '75debm95lfmshc9m8ag2ggijcn'        // e.g. 1a2b3c4d5e6f7g8h9i0j
+      UserPoolId: 'us-east-1_aWk70DxhX',
+      ClientId: '75debm951fmshc9m8ag2ggijcn'
     };
 
     const userPool = new AmazonCognitoIdentity.CognitoUserPool(POOL_DATA);
     let mode = 'signin';
 
-    // If already authenticated, redirect straight to dashboard
+    // If session exists, bypass login screen
     if (localStorage.getItem('cognito_session')) {
       window.location.replace('index.html');
     }
@@ -225,7 +229,7 @@
     function handleAuth(e) {
       e.preventDefault();
       hideAlert();
-      const email = document.getElementById('email').value.trim();
+      const email = document.getElementById('email').value.trim().toLowerCase();
       const password = document.getElementById('password').value;
       const btn = document.getElementById('submit-btn');
       btn.disabled = true;
@@ -251,7 +255,6 @@
 
         cognitoUser.authenticateUser(authenticationDetails, {
           onSuccess: function(result) {
-            // Save real Cognito token
             localStorage.setItem('cognito_session', result.getAccessToken().getJwtToken());
             localStorage.setItem('cognito_user', email);
             window.location.replace('index.html');
@@ -259,7 +262,6 @@
           onFailure: function(err) {
             btn.disabled = false;
             btn.innerText = 'Sign In';
-            // REAL validation: Rejects wrong password with red alert
             showAlert(err.message || 'Incorrect email or password.', true);
           }
         });
