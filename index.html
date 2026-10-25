@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script>
-  // Strict Gatekeeper: If no valid Cognito session, bounce immediately to login
-  if (!localStorage.getItem('cognito_session')) {
-    window.location.replace('login.html');
-  }
-  </script>
   <meta charset="UTF-8">
+  <script>
+    // Gatekeeper: Redirect unauthenticated visitors to login immediately
+    if (!localStorage.getItem('cognito_session')) {
+      window.location.replace('login.html');
+    }
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>High Availability Cloud Architecture</title>
   <link rel="stylesheet" href="style.css">
@@ -15,7 +15,6 @@
 <body>
   <div class="container">
     <header class="header">
-      <!-- Flex container to align the status pill and sign out button side-by-side -->
       <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 1.5rem;">
         <div class="status-badge" style="margin-bottom: 0;">
           <span class="status-dot"></span> System Operational
@@ -24,7 +23,6 @@
           Sign Out
         </button>
       </div>
-
       <h1>High-Availability Web Application</h1>
       <p class="subtitle">Distributed across multiple Availability Zones with an Application Load Balancer and automated CI/CD.</p>
     </header>
@@ -73,15 +71,13 @@
       <p>Deployed on Amazon Web Services &bull; rajeshdev.website</p>
     </footer>
   </div>
-<script>
+
+  <script>
     function logout() {
       localStorage.removeItem('cognito_session');
       localStorage.removeItem('cognito_user');
       window.location.replace('login.html');
     }
   </script>
-</body>
-</html>
-
 </body>
 </html>
